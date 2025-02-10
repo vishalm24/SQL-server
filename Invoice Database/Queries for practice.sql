@@ -1,0 +1,239 @@
+USE InvoiceDB;
+---- 1. SELECT all values:
+--SELECT * FROM tblCustomer;
+---- 2. SELECT only needed columns from table:
+--SELECT CustomerName, CustomerCode 
+--FROM tblCustomer;
+---- 3. SELECT using numeric criteria:
+--SELECT CustomerId, CustomerName, CustomerCode 
+--FROM tblCustomer WHERE CustomerId = 3;
+---- 4. SELECT using string criteria:
+--SELECT CustomerId, CustomerName, CustomerCode
+--FROM tblCustomer WHERE CustomerName = 'Jane Smith';
+---- 5. SELECT using AND and OR:
+--SELECT CustomerId, CustomerName, CustomerCode
+--FROM tblCustomer WHERE CustomerName = 'John Doe' AND CustomerId = 1;
+--SELECT CustomerId, CustomerName, CustomerCode
+--FROM tblCustomer WHERE CustomerName = 'John Doe' OR CustomerId = 5;
+---- 6. Sort data using Ascending and Descending:
+--SELECT CustomerId, CustomerName, CustomerCode
+--FROM tblCustomer 
+--ORDER BY CustomerName DESC;
+---- 7. Provide user friendly alias for column names:
+--SELECT CustomerId as Id,
+--		CustomerName as Name,
+--		CustomerCode as Code,
+--		CustomerPhoneNumber as Phone
+----FROM tblCustomer;
+---- 8. Display unique records from a table:
+--SELECT DISTINCT CustomerId, CustomerName, CustomerPhoneNumber 
+--FROM tblCustomer;
+---- 9. Search using pattern and wildcards:
+--SELECT CustomerId, CustomerName, CustomerCode 
+--FROM tblCustomer 
+--WHERE CustomerName LIKE 'j%';
+--SELECT CustomerId, CustomerName, CustomerCode 
+--FROM tblCustomer 
+--WHERE CustomerName LIKE 'J__n%';
+----Recordes which does not starts with j:
+----[] helps us to define not like structure but we have to use ^
+--SELECT CustomerId, CustomerName, CustomerCode 
+--FROM tblCustomer 
+--WHERE CustomerName LIKE '[^j]%';
+---- Another one:
+--SELECT CustomerId, CustomerName, CustomerCode 
+--FROM tblCustomer 
+--WHERE CustomerName LIKE '___[^n]%';
+---- 10. Create runtime calculated column:
+--SELECT * FROM tblProduct;
+--SELECT ProductId as Id,
+--		ProductName as Name,
+--		ProductCost as MRP,
+--		(ProductCost - 50) as DiscountedValue
+--FROM tblProduct;
+---- 11. CASE statement with SQL:
+--SELECT ProductId as Id,
+--       ProductName as Name,
+--       ProductCost as MRP,
+--       (CASE
+--           WHEN ProductCost > 700 AND ProductCost <= 220000 THEN 'Medium Cost'
+--           WHEN ProductCost <= 700 THEN 'Low Cost'
+--           WHEN ProductCost > 220000 THEN 'High Cost'
+--           ELSE 'Na'
+--		   END
+--       ) AS CostLevel
+--FROM tblProduct;
+---- 12. Join data from 2 SELECTs using union and union all
+--SELECT ProductName, ProductCost FROM tblProduct
+--UNION ALL
+--SELECT AncillaryName, AncillaryCost FROM tblAncillary;
+----UNION gives us combined data. Common data will be shown only once.
+----UNION ALL gives us all data from both tables.
+----While using union we should remember structure of selected column should be same.
+----And Sequence should be same too.
+---- 13. Show matching data from two tables. (inner join):
+--SELECT pc.ProductId_fk as ProductId,
+--		pc.SalesDate as SDate,
+--		p.ProductName as Name,
+--		p.ProductCost
+--FROM tblProductCustomer as pc
+--INNER JOIN tblProduct as p
+--ON pc.ProductId_fk = p.ProductId;
+---- 14. Left Join:
+--SELECT c.CustomerId as Id,
+--		c.CustomerName as Name,
+--		c.CustomerPhoneNumber as Phone,
+--		a.Address1 as Address,
+--		a.City
+--FROM tblCustomer as c 
+--LEFT JOIN tblAddress as a 
+--ON c.CustomerId = a.CustomerId;
+---- 14. Right Join:
+--SELECT c.CustomerId as Id,
+--		c.CustomerName as Name,
+--		c.CustomerPhoneNumber as Phone,
+--		a.Address1 as Address,
+--		a.City
+--FROM tblCustomer as c 
+--RIGHT JOIN tblAddress as a 
+--ON c.CustomerId = a.CustomerId;
+---- 15. FullOuter Join:
+--SELECT c.CustomerId as Id,
+--		c.CustomerName as Name,
+--		c.CustomerPhoneNumber as Phone,
+--		a.Address1 as Address,
+--		a.City
+--FROM tblCustomer as c 
+--FULL OUTER JOIN tblAddress as a 
+--ON c.CustomerId = a.CustomerId;
+---- 16. Show Cartesian Join of 2 tables(Cross Join)
+--SELECT p.ProductName, ac.AncillaryName,
+--		(p.ProductCost + ac.AncillaryCost) as TotalCost,
+--		(p.ProductCost + ac.AncillaryCost -500) as DiscountedCost
+--FROM tblProduct as p CROSS JOIN tblAncillary as ac;
+---- 17. Complex sql inner join statement:
+--SELECT c.CustomerId,
+--		c.CustomerName as Name,
+--		c.CustomerPhoneNumber as Contact,
+--		p.ProductId,
+--		p.ProductCost,
+--		pc.SalesDate
+--FROM
+--tblProductCustomer as pc
+--inner join tblProduct as p
+--on pc.ProductId_fk = p.ProductId
+--inner join tblCustomer as c
+--on pc.CustomerId_fk = c.CustomerId
+--Order By c.CustomerId;
+---- 18. Display aggregate values from table(GROUP BY):
+--SELECT p.ProductName, p.ProductCost
+--FROM tblProduct as p ORDER BY p.ProductName;
+--SELECT p.ProductName as Name,
+--	SUM(p.ProductCost) AS TotalSales,
+--	COUNT(*) AS NumberOfItems
+--FROM tblProductCustomer as pc 
+--INNER JOIN tblProduct as p 
+--on pc.ProductId_fk = p.ProductId
+--GROUP BY p.ProductName
+--ORDER BY p.ProductName;
+---- 19. Display aggregate values form table(HAVING):
+---- Printing data which has Count more than 1.
+-----Having is applicable only after use of aggregate function.
+--SELECT p.ProductName as Name,
+--	SUM(p.ProductCost) AS TotalSales,
+--	COUNT(*) AS NumberOfItems
+--FROM tblProductCustomer as pc 
+--INNER JOIN tblProduct as p 
+--on pc.ProductId_fk = p.ProductId
+--GROUP BY p.ProductName
+--HAVING COUNT(*)>1
+--ORDER BY p.ProductName;
+---- 20. SELF JOIN:
+--SELECT t1.CustomerId, t1.CustomerName, t1.CustomerPhoneNumber, t2.CustomerName AS Reference
+--FROM tblCustomer as t1
+--Left Join tblCustomer as t2
+--ON t1.CustomerReferenceId_fk = t2.CustomerId;
+---- 21. ISNULL:
+--SELECT t1.CustomerId, t1.CustomerName, t1.CustomerPhoneNumber, 
+--ISNULL(t2.CustomerName, 'Direct walkin') AS Reference
+--FROM tblCustomer as t1
+--Left Join tblCustomer as t2
+--ON t1.CustomerReferenceId_fk = t2.CustomerId;
+---- 22. Sub Queries:
+--SELECT c.CustomerId, c.CustomerName
+--FROM tblCustomer as c
+--WHERE c.CustomerId IN
+--	(SELECT pc.CustomerId_fk
+--	FROM tblProductCustomer as pc);
+---- 23. Co-Related Query:
+--SELECT * FROM tblProduct ORDER BY tblProduct.ProductCost;
+--SELECT t1.ProductName
+--FROM tblProduct t1
+--WHERE 2 = (SELECT COUNT(*) FROM tblProduct AS t2 Where t2.ProductCost >= t1.ProductCost);
+---- 24. Min, Max and Average:
+--SELECT * FROM tblProduct ORDER BY ProductCost;
+--SELECT MIN(p.ProductCost) AS MinimumCost, 
+--		MAX(p.ProductCost) AS MaximumCost, 
+--		AVG(p.ProductCost) AS AverageCost
+--FROM tblProduct AS p;
+---- 25. Find BETWEEN numeric value:
+--SELECT p.ProductName, p.ProductCost
+--FROM tblProduct AS p
+--WHERE p.ProductCost > 700
+--AND p.ProductCost < 2000;
+--SELECT p.ProductName, p.ProductCost
+--FROM tblProduct AS p
+--WHERE p.ProductCost BETWEEN 700 AND 2000;
+---- 26. Dump table into new table:
+---- It works only while creating new table. Not existing one
+--SELECT DISTINCT c.CustomerId, c.CustomerName 
+--INTO tblGenuineCustomer
+--FROM tblProductCustomer as pc
+--INNER JOIN tblCustomer as c
+--ON pc.CustomerId_fk = c.CustomerId;
+------ For verification:
+--SELECT c.CustomerId, c.CustomerName
+--FROM tblCustomer as c;
+--SELECT * FROM tblGenuineCustomer;
+
+---- Deletes the whole table with structure
+----DROP TABLE tblGenuineCustomer;
+---- Deletes all data from table
+----TRUNCATE TABLE tblGenuineCustomer;
+
+---- 27. Get top 2 records from dataset:
+--SELECT TOP 2 * FROM tblProduct ORDER BY tblProduct.ProductCost DESC;
+
+---- 28. Insert data in to table:
+--INSERT INTO tblProduct (ProductId, ProductName, ProductCost)
+--VALUES(21, 'Desk', 200);
+--INSERT INTO tblProduct Values (22, 'Board', 150);
+--SELECT * FROM tblProduct;
+
+----Truncating data from tblProductBackup from batabase for inserting all data from tblProduct.
+--TRUNCATE TABLE tblProductBackup;
+--SELECT * FROM tblProductBackup;
+---- 29. Bulk insert in to table:
+--INSERT INTO tblProductBackup
+--SELECT * FROM tblProduct;
+
+---- 30. Update data in a table:
+--UPDATE tblProduct
+--SET ProductName = 'Black Board', ProductCost = 100
+--WHERE ProductId = 22;
+--SELECT * FROM tblProduct;
+
+---- 32. Delete data from a table:
+--DELETE tblProduct WHERE ProductId = 22;
+
+---- Own practice:
+---- OFFSET & FETCH:
+---- We can't use OFFSET & FETCH without applying ORDER BY
+--SELECT * FROM tblProduct
+--ORDER BY ProductId
+--OFFSET 3 ROWS
+--FETCH NEXT 5 ROWS ONLY;
+
+
+
+
